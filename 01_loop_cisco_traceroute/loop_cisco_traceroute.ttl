@@ -1,0 +1,26 @@
+o1 =  10
+o2 = 126
+
+EXEC_PROMPT = '^[\w\-]+#'
+PAUSE_MSEC  = 200
+
+getdir  TTL_DIR
+getdate DATE '%y%m%d'
+sprintf2 LOGFILE '%s\%03d_%s.txt' TTL_DIR o2 DATE
+
+logclose
+mpause PAUSE_MSEC
+logopen LOGFILE 1 0 0 0 1
+mpause PAUSE_MSEC
+
+for o3 0 255
+    for o4 1 254
+        sprintf2 _ipaddr '%d.%d.%d.%d' o1 o2 o3 o4
+        sprintf2 _cmd 'traceroute %s timeout 1 probe 1 numeric ttl 0 10' _ipaddr
+        ;sprintf2 _cmd 'traceroute %s timeout 1 probe 1 numeric' _ipaddr
+        ; messagebox _cmd "ƒRƒ}ƒ“ƒh"
+        sendln _cmd
+        waitregex EXEC_PROMPT
+        mpause PAUSE_MSEC
+    next
+next
