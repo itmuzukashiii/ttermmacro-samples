@@ -1,0 +1,6 @@
+_STR='1 2　3'#9'4'
+messagebox _STR "string"
+
+;;--- 全角スペースは \s ではマッチしないがそのまま全角スペースにマッチさせられる
+strmatch _STR '\d\s\d　\d\s\d'
+messagebox matchstr 'matchstr'
