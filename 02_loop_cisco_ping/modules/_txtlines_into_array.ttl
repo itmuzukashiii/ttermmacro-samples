@@ -1,0 +1,44 @@
+;;--- _TXT_FILE を読み込み，行数を _COUNT_LINE に，各行を配列 arrLINES に格納
+
+;;--- いったんファイルを開き，まず行数を数える
+fileopen _FD _TXT_FILE 0 1
+
+_COUNT_LINE = 0
+
+while 1
+  filereadln _FD _BUFLINE
+  ;;--- EOF
+  If result = 1 break
+  ;;--- ignore header / blank lines / comments
+  strmatch _BUFLINE '^[　\s]*[#\t]'
+  If result != 0 continue
+  ;;--- count up
+  _COUNT_LINE = _COUNT_LINE + 1
+endwhile
+
+fileclose _FD
+mpause 500
+;;--- 行数カウントここまで
+
+;;--- 行数分の配列を確保する
+strdim arrLINES _COUNT_LINE
+
+;;--- 改めてファイルを開きなおし、配列に格納していく
+fileopen _FD _TXT_FILE 0 1
+
+k = 0
+while 1
+  filereadln _FD _BUFLINE
+  ;;--- EOF
+  If result = 1 break
+  ;;--- ignore header / blank lines / comments
+  strmatch _BUFLINE '^[　\s]*[#\t]'
+  If result != 0 continue
+  ;;--- 各行のコマンドを配列要素として格納
+  arrLINES[k] = _BUFLINE
+  ;;--- count up
+  k = k + 1
+endwhile
+
+fileclose _FD
+mpause 500

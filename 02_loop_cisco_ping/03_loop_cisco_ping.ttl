@@ -1,0 +1,53 @@
+;;--- IPアドレスリスト
+IPADDR_TXT='01_IPアドレス.txt'
+;;--- Cisco EXEC プロンプト正規表現
+EXEC_PROMPT   = '^[\w\-]+#'
+;;--- TTL の親ディレクトリパスを取得
+getdir TTL_DIR
+
+;;--- IPアドレスリストのパスを組み立て
+sprintf2 IPADDR_TXT_PATH '%s\%s' TTL_DIR IPADDR_TXT
+
+;;--- IPアドレスリストを読み込み，行数を _COUNT_LINE に，各行を arrLINES に格納
+_TXT_FILE = IPADDR_TXT_PATH
+include 'modules\_txtlines_into_array.ttl'
+
+gettime _DATETIME '%Y%m%d%H%M%S'
+sprintf2 _LOGFILE '%s\ping_%s.log' TTL_DIR _DATETIME
+
+logclose
+mpause 300
+logopen _LOGFILE 0 0 0 1 1
+mpause 300
+
+;;--- 一度改行を入れる
+sendln ''
+;;--- プロンプト待機
+waitregex EXEC_PROMPT
+
+for _K 1 _COUNT_LINE
+  ;;--- タブで分割
+  strsplit arrLINES[_K-1] #9
+  ;;--- 先頭要素から IP アドレスの取得を試みる
+  _TEMP=groupmatchstr1
+  strmatch _TEMP '^[　\s]*((\d{1,3}\.){3}\d{1,3})'
+  if result > 0 then
+    _IP=groupmatchstr1
+  else
+    continue
+  endif
+  ;;--- ping コマンド組み立て
+  sprintf2 _PINGCMD 'ping %s timeout 2 repeat 5' _IP
+  ;;--- ping コマンド送信
+  sendln _PINGCMD
+  ;;--- プロンプト待機
+  waitregex EXEC_PROMPT
+  ;;--- 一時停止
+  mpause 50
+next
+
+mpause 300
+logclose
+mpause 300
+
+exit

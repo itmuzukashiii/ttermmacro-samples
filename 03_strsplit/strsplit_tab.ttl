@@ -1,0 +1,27 @@
+EXEC_PROMPT   = '^[\w\-]+#'
+
+;;--- タブは #9 で表記
+STR='192.168.30.33'#9'hostname'#9'C891'#9'15.0.1'
+messagebox STR ''
+
+;;--- タブで分割
+strsplit STR #9
+messagebox groupmatchstr1 "groupmatchstr1"
+messagebox groupmatchstr2 "groupmatchstr2"
+messagebox groupmatchstr3 "groupmatchstr3"
+messagebox groupmatchstr4 "groupmatchstr4"
+messagebox groupmatchstr5 "groupmatchstr5"
+messagebox groupmatchstr6 "groupmatchstr6"
+messagebox groupmatchstr7 "groupmatchstr7"
+messagebox groupmatchstr8 "groupmatchstr8"
+messagebox groupmatchstr9 "groupmatchstr9"
+
+;;--- 先頭要素から IP アドレスを取得
+_ip=groupmatchstr1
+
+;;--- ping コマンド組み立て
+sprintf2 _pingcmd 'ping %s timeout 2 repeat 5' _ip
+
+;;--- ping コマンド送信
+; sendln _pingcmd
+; waitregex EXEC_PROMPT
